@@ -18,4 +18,4 @@ Not Started
 
 ## History
 
-<!-- Keep this updated. Earliest to latest -->
+- **2026-05-27** — Initial Next.js and Tailwind CSS setup, added project documentation, configured context files, pushed to GitHub
