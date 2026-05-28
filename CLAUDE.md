@@ -33,7 +33,7 @@ bun run lint     # Run ESLint
 
 ## Key Files
 
-- `src/app/page.tsx` — Home page route
+- `src/app/(marketing)/page.tsx` — Home page route (`/`)
 - `src/app/layout.tsx` — Root layout with metadata and fonts
 - `src/app/globals.css` — Global styles and Tailwind imports
 - `next.config.ts` — Next.js configuration (React Compiler enabled)
@@ -47,46 +47,47 @@ Use the `mcp__context7__query-docs` tool to fetch the latest official documentat
 
 DevStash uses a feature-oriented structure on top of the Next.js App Router.
 
-### Rules
+### Core Rules
 
-- `src/app` is for routes, layouts, and route-level loading/error files only.
+- `src/app` is for Next.js routes, layouts, route groups, loading files, error files, and route handlers only.
+- Use route groups to separate public marketing routes from authenticated app routes.
+- Public routes belong under `src/app/(marketing)`.
+- Authenticated product routes belong under `src/app/(app)`.
 - Shared UI primitives live in `src/components/ui`.
 - Domain-specific UI belongs in `src/features/<domain>/components`.
 - Server actions belong in `src/features/<domain>/actions`.
 - Zod schemas belong in `src/features/<domain>/schemas`.
 - Feature-specific types belong in `src/features/<domain>/types`.
 - Feature-specific utilities belong in `src/features/<domain>/utils`.
+- Feature-specific hooks belong in `src/features/<domain>/hooks`.
+- Feature-specific mock data belongs inside the relevant feature, usually `src/features/<domain>/mock`.
 - Global infrastructure belongs in `src/lib`.
-- Do not dump feature logic into `src/lib`.
-- Do not over-componentize early; prefer readable files until duplication appears.
+- Do not dump feature logic, mock data, or domain utilities into `src/lib`.
+- Keep shadcn/ui generated components in `src/components/ui`.
 - Prefer server components by default.
 - Use client components only when interaction, hooks, browser APIs, or local state are required.
-- Keep shadcn/ui generated components in `src/components/ui`.
+- Do not over-componentize early. Prefer readable files until duplication appears.
 
 ### Route Organization
-
-Use route groups to separate public marketing pages from authenticated app pages:
 
 ```txt
 src/app/
   (marketing)/
+    page.tsx
   (app)/
+    dashboard/
+      page.tsx
+    items/
+    collections/
+    settings/
 ```
 
-Authenticated product routes should live under:
-
-```txt
-src/app/(app)/
-```
+Route groups should not change URLs.
 
 Examples:
 
-```txt
-src/app/(app)/dashboard/page.tsx
-src/app/(app)/items/page.tsx
-src/app/(app)/collections/page.tsx
-src/app/(app)/settings/page.tsx
-```
+- `src/app/(marketing)/page.tsx` serves `/`
+- `src/app/(app)/dashboard/page.tsx` serves `/dashboard`
 
 ### Feature Organization Example
 
@@ -98,16 +99,108 @@ src/features/items/
   types/
   utils/
   hooks/
+  mock/
+
+src/features/collections/
+  components/
+  actions/
+  schemas/
+  types/
+  utils/
+  hooks/
+  mock/
+
+src/features/dashboard/
+  components/
+  mock/
+```
+
+### Global Infrastructure
+
+`src/lib` is reserved for global utilities and infrastructure only.
+
+Acceptable examples:
+
+```txt
+src/lib/prisma.ts
+src/lib/utils.ts
+src/lib/auth.ts
+src/lib/env.ts
+```
+
+Avoid:
+
+```txt
+src/lib/mock-data.ts
+src/lib/item-utils.ts
+src/lib/collection-helpers.ts
+```
+
+Those should live in their relevant feature folders.
+
+### Prisma Conventions
+
+Generated Prisma client code should live outside `src`:
+
+```txt
+generated/prisma/
+```
+
+The human-authored Prisma schema and migrations live in:
+
+```txt
+prisma/
+  schema.prisma
+  migrations/
+  seed.ts
+```
+
+`prisma/schema.prisma` should use:
+
+```prisma
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+```
+
+Application code should import Prisma only from:
+
+```ts
+import { prisma } from "@/lib/prisma";
+```
+
+Do not import from `generated/prisma` directly outside `src/lib/prisma.ts`.
+
+Never use:
+
+```bash
+prisma db push
+```
+
+Use migrations only:
+
+```bash
+npx prisma migrate dev
+npx prisma migrate deploy
 ```
 
 ### Import Guidance
 
-Use path aliases where appropriate. Prefer clear imports like:
+Use path aliases.
+
+Preferred:
 
 ```ts
 import { Sidebar } from "@/features/dashboard/components/sidebar";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { prisma } from "@/lib/prisma";
+```
+
+Avoid deep relative imports like:
+
+```ts
+import { Button } from "../../../components/ui/button";
 ```
 
 ### Migration Policy

@@ -22,7 +22,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { currentUser, collections, items, itemTypes } from "@/lib/mock-data";
+import { currentUser, collections, items, itemTypes } from "@/features/dashboard/mock/mock-data";
 import { iconMap } from "@/features/items/utils/item-types";
 
 interface SidebarContentProps {

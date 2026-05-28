@@ -6,54 +6,28 @@
 
 Completed
 
-## Feature: Seed Demo Data
+## Feature: Dashboard Items from Database
 
-### Requirements (from @context/features/seed-spec.md)
-- Create demo user with email/password
-- Create system item types (7 types: snippet, prompt, command, note, file, image, link)
-- Create 5 collections with items:
-  - React Patterns (3 snippets)
-  - AI Workflows (3 prompts)
-  - DevOps (1 snippet, 1 command, 2 links)
-  - Terminal Commands (4 commands)
-  - Design Resources (4 links)
+### Requirements (from @context/features/dashboard-items-spec.md)
+- Create src/lib/db/items.ts with data fetching functions
+- Fetch items directly in server component
+- Item card icon/border derived from the item type
+- Display item type tags and anything else currently there
+- Update collection stats display
 
 ### Steps
-1. Update prisma/seed.ts with full demo data
-2. Run seed script
-3. Verify data in database
-
-## Feature: Neon Postgres + Prisma Setup
-
-### Requirements (from @context/features/database-spec.md)
-- Use Neon PostgreSQL (serverless)
-- Create initial schema based on data models in project-overview.md
-- Include NextAuth models (Account, Session, VerificationToken)
-- Add appropriate indexes and cascade deletes
-- Use Prisma 7 (has breaking changes - follow upgrade guide)
-- Use migrations only (never use `prisma db push`)
-- Development branch for DATABASE_URL and production branch separate
-
-### Steps
-1. Create a new branch `feature/database-setup`
-2. Install Prisma and configure for Neon PostgreSQL
-3. Create initial schema with NextAuth models and data models from project-overview.md
-4. Create and run initial migration
-5. Test connection
-6. Verify build passes
-7. Merge to main and delete branch
+1. [x] Create src/lib/db/items.ts with getRecentItems function
+2. [x] Create ItemWithDetails type that matches DashboardShell expectations
+3. [x] Update DashboardPage to fetch from database instead of mock data
+4. [x] Run build and verify
+5. [x] Test in browser (server running on port 3000/3001)
+6. [x] Flatten route structure — moved dashboard to root, removed (app)/(marketing) folders
+7. [x] Moved favicon.ico to public/
 
 ## History
-
+- **2026-05-28** — Dashboard Items from Database completed — items and tags now fetched from Neon PostgreSQL via Prisma (src/lib/db/items.ts)
+- **2026-05-28** — Dashboard Collections from Database completed — collections now fetched from Neon PostgreSQL via Prisma
 - **2026-05-28** — Dashboard UI Phase 3 completed — Stats cards, Recent Collections, Pinned Items, Recent Items list
-- **2026-05-27** — Dashboard UI Phase 2 completed — Collapsible sidebar, items/types navigation, favorites, pinned, collections, user avatar
-- **2026-05-27** — Dashboard UI Phase 2 started
-- **2026-05-27** — Dashboard UI Phase 1 completed
-- **2026-05-27** — Dashboard UI Phase 1 started
-- **2026-05-27** — Initial Next.js and Tailwind CSS setup, added project documentation, configured context files, pushed to GitHub
-
-## History
-
 - **2026-05-27** — Dashboard UI Phase 2 completed — Collapsible sidebar, items/types navigation, favorites, pinned, collections, user avatar
 - **2026-05-27** — Dashboard UI Phase 2 started
 - **2026-05-27** — Dashboard UI Phase 1 completed

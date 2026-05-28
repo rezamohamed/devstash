@@ -45,13 +45,17 @@ export function ItemCard({
 
   return (
     <div
-      className="item-card rounded-xl p-5 border cursor-pointer"
+      className="item-card rounded-xl p-5 border cursor-pointer flex flex-col h-full relative"
       style={{
         backgroundColor: "var(--bg-card)",
         borderColor: "var(--border-color)",
         transition: "border-color 0.15s, transform 0.15s",
       }}
     >
+      <div
+        className="absolute top-0 left-0 w-1 h-full rounded-l-xl"
+        style={{ backgroundColor: color }}
+      />
       {/* Header */}
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-2 min-w-0">
@@ -162,7 +166,7 @@ export function ItemCard({
 
       {/* Footer */}
       <div
-        className="flex items-center justify-between pt-2"
+        className="flex items-center justify-between pt-2 mt-auto"
         style={{ borderTop: "1px solid var(--border-color)" }}
       >
         <div className="flex items-center gap-1.5">

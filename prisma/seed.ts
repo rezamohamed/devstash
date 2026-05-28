@@ -1,14 +1,5 @@
-import { PrismaClient } from "../src/generated/prisma/client";
-import { neonConfig } from "@neondatabase/serverless";
-import { PrismaNeon } from "@prisma/adapter-neon";
+import { prisma } from "../src/lib/prisma";
 import bcrypt from "bcryptjs";
-import ws from "ws";
-
-neonConfig.webSocketConstructor = ws;
-
-const prisma = new PrismaClient({
-  adapter: new PrismaNeon({ connectionString: process.env.DATABASE_URL! }),
-});
 
 // ============================================
 // Seed Data
