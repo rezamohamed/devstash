@@ -518,6 +518,10 @@ Suggested icon set:
 * [Lucide Icons](https://lucide.dev?utm_source=chatgpt.com)
 
 ---
+# Design Spec
+
+Refer to [devstash_design_spec.md](devstash_design_spec.md) for design specs
+
 
 # 🖥 Layout Draft
 
