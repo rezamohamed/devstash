@@ -6,25 +6,29 @@
 
 Completed
 
-## Feature: Dashboard Items from Database
+## Feature: Stats & Sidebar from Database
 
-### Requirements (from @context/features/dashboard-items-spec.md)
-- Create src/lib/db/items.ts with data fetching functions
-- Fetch items directly in server component
-- Item card icon/border derived from the item type
-- Display item type tags and anything else currently there
-- Update collection stats display
+### Requirements (from @context/features/stats-sidebar-spec.md)
+- Display stats from database instead of mock data
+- Display item types in sidebar with icons, linking to /items/[typename]
+- Add "View all collections" link under collections list that goes to /collections
+- Keep star icons for favorite collections, but for recents show colored circle based on most-used item type
+- Create src/lib/db/items.ts and add the database functions
 
 ### Steps
-1. [x] Create src/lib/db/items.ts with getRecentItems function
-2. [x] Create ItemWithDetails type that matches DashboardShell expectations
-3. [x] Update DashboardPage to fetch from database instead of mock data
-4. [x] Run build and verify
-5. [x] Test in browser (server running on port 3000/3001)
-6. [x] Flatten route structure — moved dashboard to root, removed (app)/(marketing) folders
-7. [x] Moved favicon.ico to public/
+1. [x] Add getItemTypes function to src/lib/db/items.ts
+2. [x] Add getFirstUser function to src/lib/db/users.ts
+3. [x] Update Sidebar to accept items, itemTypes, collections, currentUser as props
+4. [x] Remove mock-data imports from Sidebar
+5. [x] Update DashboardShell to pass collections to Sidebar
+6. [x] Update DashboardPage to fetch itemTypes, currentUser from DB and pass to DashboardShell
+7. [x] Add colored circle for recent collections based on most-used item type
+8. [x] Add "View all collections" link to sidebar
+9. [x] Run build and verify
+10. [ ] Test in browser
 
 ## History
+- **2026-05-28** — Stats & Sidebar from Database completed — sidebar now fetches item types, collections, current user from DB; item types ordered and capitalized
 - **2026-05-28** — Dashboard Items from Database completed — items and tags now fetched from Neon PostgreSQL via Prisma (src/lib/db/items.ts)
 - **2026-05-28** — Dashboard Collections from Database completed — collections now fetched from Neon PostgreSQL via Prisma
 - **2026-05-28** — Dashboard UI Phase 3 completed — Stats cards, Recent Collections, Pinned Items, Recent Items list

@@ -8,23 +8,39 @@ import { Sidebar, MobileSidebar } from "@/features/dashboard/components/sidebar"
 import { ItemCard } from "@/features/dashboard/components/ItemCard";
 import { CollectionCard } from "@/features/dashboard/components/CollectionCard";
 import { getItemTypeIcon, getItemTypeColor } from "@/features/items/utils/item-types";
-import type { Item, Tag } from "@/features/dashboard/mock/mock-data";
+import type { Item, Tag, ItemType } from "@/features/items/types/item";
 import type { CollectionWithDetails } from "@/lib/db/collections";
+import type { User } from "@/features/users/types/user";
 
 interface DashboardShellProps {
   recentCollections: CollectionWithDetails[];
   items: Item[];
   tags: Tag[];
+  itemTypes: ItemType[];
+  currentUser: User | null;
 }
 
-export function DashboardShell({ recentCollections, items, tags }: DashboardShellProps) {
+export function DashboardShell({
+  recentCollections,
+  items,
+  tags,
+  itemTypes,
+  currentUser,
+}: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   return (
     <div className="flex h-screen" style={{ backgroundColor: "var(--bg-main)" }}>
       {/* Left Sidebar */}
-      <Sidebar collapsed={sidebarCollapsed} onCollapsedChange={setSidebarCollapsed} />
+      <Sidebar
+        collapsed={sidebarCollapsed}
+        onCollapsedChange={setSidebarCollapsed}
+        items={items}
+        itemTypes={itemTypes}
+        collections={recentCollections}
+        currentUser={currentUser}
+      />
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col h-full" style={{ overflow: "hidden" }}>
@@ -40,7 +56,12 @@ export function DashboardShell({ recentCollections, items, tags }: DashboardShel
           {/* Left side: Mobile menu + Search */}
           <div className="flex items-center gap-3 flex-1">
             <div className="flex md:hidden">
-              <MobileSidebar />
+              <MobileSidebar
+                items={items}
+                itemTypes={itemTypes}
+                collections={recentCollections}
+                currentUser={currentUser}
+              />
             </div>
 
             {/* Search bar */}

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { Item, Tag } from "@/features/items/types/item";
+import type { Item, Tag, ItemType } from "@/features/items/types/item";
 
 export type ItemWithDetails = Item;
 
@@ -88,4 +88,34 @@ export async function getAllTags(): Promise<Tag[]> {
     id: tag.id,
     name: tag.name,
   }));
+}
+
+const ITEM_TYPE_ORDER = [
+  "snippet",
+  "prompt",
+  "command",
+  "note",
+  "file",
+  "image",
+  "link",
+];
+
+export async function getItemTypes(): Promise<ItemType[]> {
+  const itemTypes = await prisma.itemType.findMany();
+
+  return itemTypes
+    .map((type) => ({
+      id: type.id,
+      name: type.name,
+      icon: type.icon,
+      color: type.color,
+      isSystem: type.isSystem,
+    }))
+    .sort((a, b) => {
+      const aIndex = ITEM_TYPE_ORDER.indexOf(a.name.toLowerCase());
+      const bIndex = ITEM_TYPE_ORDER.indexOf(b.name.toLowerCase());
+      const aPos = aIndex === -1 ? 999 : aIndex;
+      const bPos = bIndex === -1 ? 999 : bIndex;
+      return aPos - bPos;
+    });
 }

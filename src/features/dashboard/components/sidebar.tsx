@@ -12,6 +12,7 @@ import {
   X,
   LayoutDashboard,
   Pin,
+  FolderOpen,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -22,15 +23,28 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { currentUser, collections, items, itemTypes } from "@/features/dashboard/mock/mock-data";
 import { iconMap } from "@/features/items/utils/item-types";
+import type { Item, ItemType, Tag } from "@/features/items/types/item";
+import type { User } from "@/features/users/types/user";
+import type { CollectionWithDetails } from "@/lib/db/collections";
 
 interface SidebarContentProps {
   showCloseButton?: boolean;
   isCollapsed?: boolean;
+  items: Item[];
+  itemTypes: ItemType[];
+  collections: CollectionWithDetails[];
+  currentUser: User | null;
 }
 
-function SidebarContent({ showCloseButton = false, isCollapsed = false }: SidebarContentProps) {
+function SidebarContent({
+  showCloseButton = false,
+  isCollapsed = false,
+  items,
+  itemTypes,
+  collections,
+  currentUser,
+}: SidebarContentProps) {
   const pathname = usePathname();
 
   const getInitials = (name: string) =>
@@ -288,7 +302,7 @@ function SidebarContent({ showCloseButton = false, isCollapsed = false }: Sideba
                   >
                     <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <Icon style={{ width: '16px', height: '16px', color: type.color }} />
-                      <span>{type.name}s</span>
+                      <span>{type.name.charAt(0).toUpperCase() + type.name.slice(1)}s</span>
                     </span>
                     <span
                       className="nav-item-badge"
@@ -327,7 +341,7 @@ function SidebarContent({ showCloseButton = false, isCollapsed = false }: Sideba
 
           {/* Nav Section: Collections */}
           <div>
-            <div className="mb-1 px-2">
+            <div className="mb-1 px-2 flex items-center justify-between">
               <span
                 className="nav-section-title"
                 style={{
@@ -341,59 +355,78 @@ function SidebarContent({ showCloseButton = false, isCollapsed = false }: Sideba
               >
                 Collections
               </span>
+              <Link
+                href="/collections"
+                className="text-xs transition-opacity hover:opacity-80"
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '10px',
+                  fontWeight: 500,
+                  color: 'var(--text-muted)',
+                  textDecoration: 'none',
+                }}
+              >
+                View all
+              </Link>
             </div>
             <nav className="space-y-0.5">
-              {collections.slice(0, 5).map((collection) => (
-                <Link
-                  key={collection.id}
-                  href={`/collections/${collection.id}`}
-                  className="nav-item"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '8px 10px',
-                    borderRadius: '6px',
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    color: 'var(--text-secondary)',
-                    textDecoration: 'none',
-                    transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
-                  }}
-                >
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span
-                      style={{
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '4px',
-                        backgroundColor: 'var(--border-color)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      <Star style={{ width: '10px', height: '10px', color: 'var(--text-muted)' }} />
-                    </span>
-                    <span className="truncate">{collection.name}</span>
-                  </span>
-                  <span
-                    className="nav-item-badge"
+              {collections.slice(0, 5).map((collection) => {
+                const isFavorite = collection.isFavorite;
+                const typeColor = collection.typeColors[0] || 'var(--border-color)';
+                return (
+                  <Link
+                    key={collection.id}
+                    href={`/collections/${collection.id}`}
+                    className="nav-item"
                     style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '8px 10px',
+                      borderRadius: '6px',
                       fontFamily: 'var(--font-sans)',
-                      fontSize: '10px',
-                      fontWeight: 600,
-                      backgroundColor: 'var(--border-color)',
-                      color: 'var(--text-muted)',
-                      padding: '2px 6px',
-                      borderRadius: '10px'
+                      fontSize: '13px',
+                      fontWeight: 500,
+                      color: 'var(--text-secondary)',
+                      textDecoration: 'none',
+                      transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
                     }}
                   >
-                    {items.filter(i => i.collectionIds.includes(collection.id)).length}
-                  </span>
-                </Link>
-              ))}
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      {isFavorite ? (
+                        <Star style={{ width: '16px', height: '16px', color: '#eab308', fill: '#eab308' }} />
+                      ) : (
+                        <span
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            borderRadius: '4px',
+                            backgroundColor: typeColor,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        />
+                      )}
+                      <span className="truncate">{collection.name}</span>
+                    </span>
+                    <span
+                      className="nav-item-badge"
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: '10px',
+                        fontWeight: 600,
+                        backgroundColor: 'var(--border-color)',
+                        color: 'var(--text-muted)',
+                        padding: '2px 6px',
+                        borderRadius: '10px'
+                      }}
+                    >
+                      {collection.itemCount}
+                    </span>
+                  </Link>
+                );
+              })}
             </nav>
           </div>
         </div>
@@ -422,7 +455,7 @@ function SidebarContent({ showCloseButton = false, isCollapsed = false }: Sideba
                 fontFamily: 'var(--font-sans)'
               }}
             >
-              {currentUser.name ? getInitials(currentUser.name) : "U"}
+              {currentUser?.name ? getInitials(currentUser.name) : "U"}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
@@ -438,7 +471,7 @@ function SidebarContent({ showCloseButton = false, isCollapsed = false }: Sideba
                 whiteSpace: 'nowrap'
               }}
             >
-              {currentUser.name || "User"}
+              {currentUser?.name || "User"}
             </p>
             <p
               className="profile-tier"
@@ -451,7 +484,7 @@ function SidebarContent({ showCloseButton = false, isCollapsed = false }: Sideba
                 color: 'var(--color-prompt)'
               }}
             >
-              {currentUser.isPro ? 'Pro Tier' : 'Free Tier'}
+              {currentUser?.isPro ? 'Pro Tier' : 'Free Tier'}
             </p>
           </div>
         </div>
@@ -463,9 +496,20 @@ function SidebarContent({ showCloseButton = false, isCollapsed = false }: Sideba
 interface SidebarProps {
   collapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
+  items: Item[];
+  itemTypes: ItemType[];
+  collections: CollectionWithDetails[];
+  currentUser: User | null;
 }
 
-export function Sidebar({ collapsed = false, onCollapsedChange }: SidebarProps) {
+export function Sidebar({
+  collapsed = false,
+  onCollapsedChange,
+  items,
+  itemTypes,
+  collections,
+  currentUser,
+}: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
 
   const handleToggle = () => {
@@ -513,7 +557,7 @@ export function Sidebar({ collapsed = false, onCollapsedChange }: SidebarProps) 
                     <Icon style={{ width: '18px', height: '18px', color: type.color }} />
                   </Link>
                 </TooltipTrigger>
-                <TooltipContent side="right">{type.name}s</TooltipContent>
+                <TooltipContent side="right">{type.name.charAt(0).toUpperCase() + type.name.slice(1)}s</TooltipContent>
               </Tooltip>
             );
           })}
@@ -582,12 +626,30 @@ export function Sidebar({ collapsed = false, onCollapsedChange }: SidebarProps) 
         </Tooltip>
       </div>
 
-      <SidebarContent isCollapsed={isCollapsed} />
+      <SidebarContent
+        isCollapsed={isCollapsed}
+        items={items}
+        itemTypes={itemTypes}
+        collections={collections}
+        currentUser={currentUser}
+      />
     </aside>
   );
 }
 
-export function MobileSidebar() {
+interface MobileSidebarProps {
+  items: Item[];
+  itemTypes: ItemType[];
+  collections: CollectionWithDetails[];
+  currentUser: User | null;
+}
+
+export function MobileSidebar({
+  items,
+  itemTypes,
+  collections,
+  currentUser,
+}: MobileSidebarProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -603,7 +665,13 @@ export function MobileSidebar() {
         className="w-[260px] p-0"
         style={{ backgroundColor: 'var(--bg-sidebar)' }}
       >
-        <SidebarContent showCloseButton />
+        <SidebarContent
+          showCloseButton
+          items={items}
+          itemTypes={itemTypes}
+          collections={collections}
+          currentUser={currentUser}
+        />
       </SheetContent>
     </Sheet>
   );
