@@ -7,12 +7,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Code,
-  Sparkles,
-  StickyNote,
-  Terminal,
-  Link as LinkIcon,
-  File,
-  Image,
   Star,
   Menu,
   X,
@@ -28,17 +22,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { currentUser, itemTypes, collections, items } from "@/lib/mock-data";
-
-const iconMap: Record<string, React.ElementType> = {
-  Code,
-  Sparkles,
-  StickyNote,
-  Terminal,
-  Link: LinkIcon,
-  File,
-  Image,
-};
+import { currentUser, collections, items, itemTypes } from "@/lib/mock-data";
+import { iconMap } from "@/features/items/utils/item-types";
 
 interface SidebarContentProps {
   showCloseButton?: boolean;
@@ -128,8 +113,8 @@ function SidebarContent({ showCloseButton = false, isCollapsed = false }: Sideba
             <nav className="space-y-0.5">
               {/* All Resources */}
               <Link
-                href="/dashboard"
-                className={`nav-item ${pathname === '/dashboard' ? 'active' : ''}`}
+                href="/"
+                className={`nav-item ${pathname === '/' ? 'active' : ''}`}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -138,9 +123,9 @@ function SidebarContent({ showCloseButton = false, isCollapsed = false }: Sideba
                   borderRadius: '6px',
                   fontFamily: 'var(--font-sans)',
                   fontSize: '13px',
-                  fontWeight: pathname === '/dashboard' ? 600 : 500,
-                  color: pathname === '/dashboard' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                  backgroundColor: pathname === '/dashboard' ? 'var(--border-color)' : 'transparent',
+                  fontWeight: pathname === '/' ? 600 : 500,
+                  color: pathname === '/' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  backgroundColor: pathname === '/' ? 'var(--border-color)' : 'transparent',
                   textDecoration: 'none',
                   position: 'relative',
                   transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
@@ -164,7 +149,7 @@ function SidebarContent({ showCloseButton = false, isCollapsed = false }: Sideba
                 >
                   {items.length}
                 </span>
-                {pathname === '/dashboard' && (
+                {pathname === '/' && (
                   <span
                     style={{
                       position: 'absolute',
