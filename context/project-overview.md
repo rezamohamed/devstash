@@ -25,11 +25,11 @@ Instead of scattering information across:
 DevStash becomes the single source of truth for developer workflows.
 
 The product sits somewhere between:
-- :contentReference[oaicite:0]{index=0}
-- :contentReference[oaicite:1]{index=1}
-- :contentReference[oaicite:2]{index=2}
-- :contentReference[oaicite:3]{index=3}
-- :contentReference[oaicite:4]{index=4}
+- Raycast
+- Notion
+- Obsidian
+- Linear
+- GitHub Gists
 
 …but purpose-built specifically for developers and AI-first workflows.
 
@@ -478,9 +478,9 @@ Potential future pricing:
 
 Inspired by:
 
-* [Linear](https://linear.app?utm_source=chatgpt.com)
-* [Raycast](https://www.raycast.com?utm_source=chatgpt.com)
-* [Notion](https://www.notion.so?utm_source=chatgpt.com)
+* [Linear](https://linear.app)
+* [Raycast](https://www.raycast.com)
+* [Notion](https://www.notion.so)
 
 ## Visual Priorities
 
@@ -489,6 +489,15 @@ Inspired by:
 * keyboard-centric
 * low cognitive load
 * dev-native aesthetics
+
+## Screenshots
+
+Refer to the screenshots below as a base for dashboard UI.
+
+- @context/screenshots/dashboard-ui-dark.png
+- @context/screenshots/dashboard-ui-drawer-dark.png
+- @context/screenshots/dashboard-ui-light.png
+- @context/screenshots/dashboard-ui-drawer-light.png
 
 ---
 
