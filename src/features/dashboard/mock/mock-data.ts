@@ -1,5 +1,8 @@
-// Re-export all types and data from feature modules
-export type { Item, Tag, ItemType, ContentType } from "@/features/items/types/item";
+// Mock data for dashboard development - to be replaced with DB queries
+import type { Item } from "@/features/items/types/item";
+
+// Re-export types for convenience
+export type { Item, Tag } from "@/features/items/types/item";
 export { itemTypes, tags } from "@/features/items/types/item";
 
 export type { Collection } from "@/features/collections/types/collection";
@@ -7,9 +10,6 @@ export { collections } from "@/features/collections/types/collection";
 
 export type { User } from "@/features/users/types/user";
 export { currentUser } from "@/features/users/types/user";
-
-// Items remain here as raw data (to be replaced with DB queries later)
-import type { Item } from "@/features/items/types/item";
 
 export const items: Item[] = [
   {

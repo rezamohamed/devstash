@@ -8,10 +8,11 @@ import { Sidebar, MobileSidebar } from "@/features/dashboard/components/sidebar"
 import { ItemCard } from "@/features/dashboard/components/ItemCard";
 import { CollectionCard } from "@/features/dashboard/components/CollectionCard";
 import { getItemTypeIcon, getItemTypeColor } from "@/features/items/utils/item-types";
-import type { Item, Tag, Collection } from "@/lib/mock-data";
+import type { Item, Tag } from "@/features/dashboard/mock/mock-data";
+import type { CollectionWithDetails } from "@/lib/db/collections";
 
 interface DashboardShellProps {
-  recentCollections: Collection[];
+  recentCollections: CollectionWithDetails[];
   items: Item[];
   tags: Tag[];
 }
@@ -148,12 +149,10 @@ export function DashboardShell({ recentCollections, items, tags }: DashboardShel
                 className="grid gap-4"
                 style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}
               >
-                {recentCollections.map((collection, index) => (
+                {recentCollections.map((collection) => (
                   <CollectionCard
                     key={collection.id}
                     collection={collection}
-                    itemCount={items.filter(i => i.collectionIds.includes(collection.id)).length}
-                    accentColorIndex={index}
                   />
                 ))}
               </div>
