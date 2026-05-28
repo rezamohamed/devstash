@@ -14,13 +14,15 @@ import {
   File,
   Image,
   Star,
-  Clock,
   Menu,
+  X,
+  LayoutDashboard,
+  Pin,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import {
   Tooltip,
   TooltipContent,
@@ -38,13 +40,13 @@ const iconMap: Record<string, React.ElementType> = {
   Image,
 };
 
-function SidebarContent() {
-  const pathname = usePathname();
+interface SidebarContentProps {
+  showCloseButton?: boolean;
+  isCollapsed?: boolean;
+}
 
-  const favoriteCollections = collections.filter((c) => c.isFavorite);
-  const recentItems = [...items]
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    .slice(0, 5);
+function SidebarContent({ showCloseButton = false, isCollapsed = false }: SidebarContentProps) {
+  const pathname = usePathname();
 
   const getInitials = (name: string) =>
     name
@@ -55,53 +57,281 @@ function SidebarContent() {
 
   return (
     <div className="flex h-full flex-col" style={{ backgroundColor: 'var(--bg-sidebar)' }}>
-      {/* Header */}
-      <div
-        className="flex h-16 items-center justify-between px-4 border-b"
-        style={{ borderColor: 'var(--border-color)' }}
-      >
-        <span className="text-base font-semibold" style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
-          DevStash
-        </span>
-      </div>
+      {/* Mobile Header with Logo and Close button */}
+      {showCloseButton && (
+        <div
+          className="h-14 px-4 flex items-center justify-between border-b"
+          style={{ borderColor: 'var(--border-color)' }}
+        >
+          <div className="flex items-center gap-2">
+            <div
+              className="logo-icon w-7 h-7 rounded-md flex items-center justify-center"
+              style={{
+                background: 'var(--accent-gradient)',
+                boxShadow: '0 0 10px rgba(59, 130, 246, 0.3)'
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '16px',
+                  fontWeight: 800,
+                  color: 'white'
+                }}
+              >
+                D
+              </span>
+            </div>
+            <span
+              className="logo-text"
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '18px',
+                fontWeight: 700,
+                background: 'var(--accent-gradient)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}
+            >
+              DevStash
+            </span>
+          </div>
+          <SheetClose
+            className="w-8 h-8 rounded-md flex items-center justify-center transition-all duration-150 hover:opacity-80"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            <X style={{ width: '18px', height: '18px' }} />
+          </SheetClose>
+        </div>
+      )}
 
       {/* Scrollable content */}
       <ScrollArea className="flex-1">
-        <div className="p-4 space-y-6">
-          {/* Items/Types */}
+        <div className="p-3 space-y-5">
+          {/* Nav Section: Directory */}
           <div>
-            <div className="flex items-center justify-between mb-3 px-2">
+            <div className="mb-1 px-2">
               <span
-                className="text-xs font-medium uppercase tracking-wider"
-                style={{ color: 'var(--text-muted)' }}
+                className="nav-section-title"
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  color: 'var(--text-muted)'
+                }}
               >
-                Items
+                Directory
               </span>
             </div>
-            <nav className="space-y-1">
+            <nav className="space-y-0.5">
+              {/* All Resources */}
+              <Link
+                href="/dashboard"
+                className={`nav-item ${pathname === '/dashboard' ? 'active' : ''}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '8px 10px',
+                  borderRadius: '6px',
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '13px',
+                  fontWeight: pathname === '/dashboard' ? 600 : 500,
+                  color: pathname === '/dashboard' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  backgroundColor: pathname === '/dashboard' ? 'var(--border-color)' : 'transparent',
+                  textDecoration: 'none',
+                  position: 'relative',
+                  transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <LayoutDashboard style={{ width: '16px', height: '16px', color: 'var(--text-muted)' }} />
+                  <span>All Resources</span>
+                </span>
+                <span
+                  className="nav-item-badge"
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    backgroundColor: 'var(--border-color)',
+                    color: 'var(--text-muted)',
+                    padding: '2px 6px',
+                    borderRadius: '10px'
+                  }}
+                >
+                  {items.length}
+                </span>
+                {pathname === '/dashboard' && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: '6px',
+                      bottom: '6px',
+                      width: '3px',
+                      borderRadius: '0 4px 4px 0',
+                      background: 'var(--accent-gradient)'
+                    }}
+                  />
+                )}
+              </Link>
+              {/* Favorites */}
+              <Link
+                href="/favorites"
+                className="nav-item"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '8px 10px',
+                  borderRadius: '6px',
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  color: 'var(--text-secondary)',
+                  textDecoration: 'none',
+                  transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Star style={{ width: '16px', height: '16px', color: '#eab308' }} />
+                  <span>Favorites</span>
+                </span>
+                <span
+                  className="nav-item-badge"
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    backgroundColor: 'var(--border-color)',
+                    color: 'var(--text-muted)',
+                    padding: '2px 6px',
+                    borderRadius: '10px'
+                  }}
+                >
+                  {items.filter(i => i.isFavorite).length}
+                </span>
+              </Link>
+              {/* Pinned */}
+              <Link
+                href="/pinned"
+                className="nav-item"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '8px 10px',
+                  borderRadius: '6px',
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  color: 'var(--text-secondary)',
+                  textDecoration: 'none',
+                  transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Pin style={{ width: '16px', height: '16px', color: 'var(--color-snippet)' }} />
+                  <span>Pinned</span>
+                </span>
+                <span
+                  className="nav-item-badge"
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    backgroundColor: 'var(--border-color)',
+                    color: 'var(--text-muted)',
+                    padding: '2px 6px',
+                    borderRadius: '10px'
+                  }}
+                >
+                  {items.filter(i => i.isPinned).length}
+                </span>
+              </Link>
+            </nav>
+          </div>
+
+          <Separator style={{ backgroundColor: 'var(--border-color)' }} />
+
+          {/* Nav Section: Resource Types */}
+          <div>
+            <div className="mb-1 px-2">
+              <span
+                className="nav-section-title"
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  color: 'var(--text-muted)'
+                }}
+              >
+                Resource Types
+              </span>
+            </div>
+            <nav className="space-y-0.5">
               {itemTypes.map((type) => {
                 const Icon = iconMap[type.icon] || Code;
                 const href = `/items/${type.name.toLowerCase()}s`;
                 const isActive = pathname === href;
+                const count = items.filter(i => i.itemTypeId === type.id).length;
                 return (
                   <Link
                     key={type.id}
                     href={href}
-                    className={`nav-item flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-150 ${
-                      isActive
-                        ? "text-accent-foreground"
-                        : "hover:text-accent-foreground"
-                    }`}
+                    className={`nav-item ${isActive ? 'active' : ''}`}
                     style={{
-                      backgroundColor: isActive ? 'var(--sidebar-accent)' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '8px 10px',
+                      borderRadius: '6px',
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '13px',
+                      fontWeight: isActive ? 600 : 500,
                       color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+                      backgroundColor: isActive ? 'var(--border-color)' : 'transparent',
+                      textDecoration: 'none',
+                      position: 'relative',
+                      transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
                     }}
                   >
-                    <Icon
-                      className="h-4 w-4 shrink-0"
-                      style={{ color: type.color }}
-                    />
-                    <span>{type.name}s</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Icon style={{ width: '16px', height: '16px', color: type.color }} />
+                      <span>{type.name}s</span>
+                    </span>
+                    <span
+                      className="nav-item-badge"
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: '10px',
+                        fontWeight: 600,
+                        backgroundColor: 'var(--border-color)',
+                        color: 'var(--text-muted)',
+                        padding: '2px 6px',
+                        borderRadius: '10px'
+                      }}
+                    >
+                      {count}
+                    </span>
+                    {isActive && (
+                      <span
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          top: '6px',
+                          bottom: '6px',
+                          width: '3px',
+                          borderRadius: '0 4px 4px 0',
+                          background: 'var(--accent-gradient)'
+                        }}
+                      />
+                    )}
                   </Link>
                 );
               })}
@@ -110,103 +340,133 @@ function SidebarContent() {
 
           <Separator style={{ backgroundColor: 'var(--border-color)' }} />
 
-          {/* Favorites */}
+          {/* Nav Section: Collections */}
           <div>
-            <div className="flex items-center gap-2 mb-3 px-2">
-              <Star className="h-3.5 w-3.5" style={{ color: 'var(--text-muted)' }} />
+            <div className="mb-1 px-2">
               <span
-                className="text-xs font-medium uppercase tracking-wider"
-                style={{ color: 'var(--text-muted)' }}
+                className="nav-section-title"
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  color: 'var(--text-muted)'
+                }}
               >
-                Favorites
+                Collections
               </span>
             </div>
-            <nav className="space-y-1">
-              {favoriteCollections.map((collection) => (
+            <nav className="space-y-0.5">
+              {collections.slice(0, 5).map((collection) => (
                 <Link
                   key={collection.id}
                   href={`/collections/${collection.id}`}
-                  className="nav-item flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-150 hover:text-accent-foreground"
+                  className="nav-item"
                   style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '8px 10px',
+                    borderRadius: '6px',
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '13px',
+                    fontWeight: 500,
                     color: 'var(--text-secondary)',
+                    textDecoration: 'none',
+                    transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
                   }}
                 >
-                  <div
-                    className="h-2 w-2 rounded-full shrink-0"
-                    style={{ background: 'var(--accent-gradient)' }}
-                  />
-                  <span className="truncate">{collection.name}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span
+                      style={{
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '4px',
+                        backgroundColor: 'var(--border-color)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Star style={{ width: '10px', height: '10px', color: 'var(--text-muted)' }} />
+                    </span>
+                    <span className="truncate">{collection.name}</span>
+                  </span>
+                  <span
+                    className="nav-item-badge"
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '10px',
+                      fontWeight: 600,
+                      backgroundColor: 'var(--border-color)',
+                      color: 'var(--text-muted)',
+                      padding: '2px 6px',
+                      borderRadius: '10px'
+                    }}
+                  >
+                    {items.filter(i => i.collectionIds.includes(collection.id)).length}
+                  </span>
                 </Link>
               ))}
-            </nav>
-          </div>
-
-          <Separator style={{ backgroundColor: 'var(--border-color)' }} />
-
-          {/* Recent */}
-          <div>
-            <div className="flex items-center gap-2 mb-3 px-2">
-              <Clock className="h-3.5 w-3.5" style={{ color: 'var(--text-muted)' }} />
-              <span
-                className="text-xs font-medium uppercase tracking-wider"
-                style={{ color: 'var(--text-muted)' }}
-              >
-                Recent
-              </span>
-            </div>
-            <nav className="space-y-1">
-              {recentItems.map((item) => {
-                const type = itemTypes.find((t) => t.id === item.itemTypeId);
-                const Icon = type ? iconMap[type.icon] || Code : Code;
-                return (
-                  <Link
-                    key={item.id}
-                    href={`/items/${item.id}`}
-                    className="nav-item flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-150 hover:text-accent-foreground"
-                    style={{ color: 'var(--text-secondary)' }}
-                  >
-                    <Icon
-                      className="h-3.5 w-3.5 shrink-0"
-                      style={{ color: type?.color }}
-                    />
-                    <span className="truncate">{item.title}</span>
-                  </Link>
-                );
-              })}
             </nav>
           </div>
         </div>
       </ScrollArea>
 
-      {/* User avatar at bottom */}
+      {/* User profile at bottom */}
       <div
-        className="border-t p-4"
+        className="border-t p-3"
         style={{ borderColor: 'var(--border-color)' }}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 p-1.5 rounded-md transition-colors cursor-pointer hover:bg-[var(--border-color)]">
           <Avatar
-            className="h-9 w-9"
-            style={{ background: 'var(--accent-gradient)' }}
+            style={{
+              height: '32px',
+              width: '32px',
+              background: 'linear-gradient(135deg, #3b82f6 0%, #10b981 100%)',
+              border: '2px solid var(--bg-sidebar)',
+              boxShadow: '0 0 0 1px var(--border-color)'
+            }}
           >
             <AvatarFallback
-              className="text-xs font-medium"
-              style={{ color: 'white' }}
+              style={{
+                fontSize: '12px',
+                fontWeight: 700,
+                color: 'white',
+                fontFamily: 'var(--font-sans)'
+              }}
             >
               {currentUser.name ? getInitials(currentUser.name) : "U"}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
             <p
-              className="text-sm font-medium truncate"
-              style={{ color: 'var(--text-primary)' }}
+              className="profile-name"
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '13px',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
             >
               {currentUser.name || "User"}
             </p>
             <p
-              className="text-xs truncate"
-              style={{ color: 'var(--text-muted)' }}
+              className="profile-tier"
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '10px',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: 'var(--color-prompt)'
+              }}
             >
-              {currentUser.email}
+              {currentUser.isPro ? 'Pro Tier' : 'Free Tier'}
             </p>
           </div>
         </div>
@@ -232,36 +492,40 @@ export function Sidebar({ collapsed = false, onCollapsedChange }: SidebarProps) 
   if (isCollapsed) {
     return (
       <aside
-        className="flex flex-col h-full border-r sidebar-transition"
+        className="flex flex-col h-full border-r shrink-0"
         style={{
           width: 'var(--sidebar-collapsed-width)',
           backgroundColor: 'var(--bg-sidebar)',
-          borderColor: 'var(--border-color)'
+          borderColor: 'var(--border-color)',
+          transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
       >
         <div
-          className="flex h-16 items-center justify-center border-b"
-          style={{ borderColor: 'var(--border-color)' }}
+          className="h-16 flex items-center justify-center"
+          style={{ borderBottom: '1px solid var(--border-color)' }}
         >
           <Tooltip>
             <TooltipTrigger
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-150 cursor-pointer hover:opacity-80"
+              className="w-8 h-8 rounded-md flex items-center justify-center transition-all duration-150 hover:opacity-80 cursor-pointer"
               onClick={handleToggle}
-              style={{ color: 'var(--text-secondary)' }}
+              style={{ color: 'var(--text-muted)' }}
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight style={{ width: '18px', height: '18px' }} />
             </TooltipTrigger>
             <TooltipContent side="right">Expand sidebar</TooltipContent>
           </Tooltip>
         </div>
-        <div className="flex-1 flex flex-col items-center py-4 gap-2">
+        <div className="flex-1 flex flex-col items-center py-3 gap-1">
           {itemTypes.map((type) => {
             const Icon = iconMap[type.icon] || Code;
             return (
               <Tooltip key={type.id}>
-                <TooltipTrigger className="inline-flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-150 hover:opacity-80">
+                <TooltipTrigger
+                  className="w-9 h-9 rounded-md flex items-center justify-center transition-all duration-150 hover:opacity-80"
+                  style={{ cursor: 'pointer' }}
+                >
                   <Link href={`/items/${type.name.toLowerCase()}s`}>
-                    <Icon className="h-5 w-5" style={{ color: type.color }} />
+                    <Icon style={{ width: '18px', height: '18px', color: type.color }} />
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent side="right">{type.name}s</TooltipContent>
@@ -275,35 +539,65 @@ export function Sidebar({ collapsed = false, onCollapsedChange }: SidebarProps) 
 
   return (
     <aside
-      className="flex flex-col h-full border-r sidebar-transition"
+      className="flex flex-col h-full border-r shrink-0"
       style={{
         width: 'var(--sidebar-width)',
         backgroundColor: 'var(--bg-sidebar)',
-        borderColor: 'var(--border-color)'
+        borderColor: 'var(--border-color)',
+        transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
       }}
     >
+      {/* Sidebar Header with Logo */}
       <div
-        className="flex h-16 items-center justify-between px-4 border-b"
-        style={{ borderColor: 'var(--border-color)' }}
+        className="h-16 px-5 flex items-center justify-between shrink-0"
+        style={{ borderBottom: '1px solid var(--border-color)' }}
       >
-        <span
-          className="text-base font-semibold"
-          style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
-        >
-          DevStash
-        </span>
+        <div className="flex items-center gap-2.5">
+          <div
+            className="logo-icon w-7 h-7 rounded-md flex items-center justify-center"
+            style={{
+              background: 'var(--accent-gradient)',
+              boxShadow: '0 0 10px rgba(59, 130, 246, 0.3)'
+            }}
+          >
+            <span
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '16px',
+                fontWeight: 800,
+                color: 'white'
+              }}
+            >
+              D
+            </span>
+          </div>
+          <span
+            className="logo-text"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '18px',
+              fontWeight: 700,
+              background: 'var(--accent-gradient)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}
+          >
+            DevStash
+          </span>
+        </div>
         <Tooltip>
           <TooltipTrigger
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-150 cursor-pointer hover:opacity-80"
+            className="w-8 h-8 rounded-md flex items-center justify-center transition-all duration-150 hover:opacity-80 cursor-pointer"
             onClick={handleToggle}
-            style={{ color: 'var(--text-secondary)' }}
+            style={{ color: 'var(--text-muted)' }}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft style={{ width: '18px', height: '18px' }} />
           </TooltipTrigger>
-          <TooltipContent side="right">Collapse sidebar</TooltipContent>
+          <TooltipContent side="right">Collapse sidebar (Ctrl+B)</TooltipContent>
         </Tooltip>
       </div>
-      <SidebarContent />
+
+      <SidebarContent isCollapsed={isCollapsed} />
     </aside>
   );
 }
@@ -314,17 +608,17 @@ export function MobileSidebar() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
-        className="inline-flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-150 hover:opacity-80"
+        className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-150 hover:opacity-80"
         style={{ color: 'var(--text-secondary)' }}
       >
-        <Menu className="h-5 w-5" />
+        <Menu style={{ width: '20px', height: '20px' }} />
       </SheetTrigger>
       <SheetContent
         side="left"
         className="w-[260px] p-0"
         style={{ backgroundColor: 'var(--bg-sidebar)' }}
       >
-        <SidebarContent />
+        <SidebarContent showCloseButton />
       </SheetContent>
     </Sheet>
   );

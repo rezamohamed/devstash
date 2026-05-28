@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevStash Dashboard Template — Layout & Styling Specification</title>
+    
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* ==========================================================================
+           1. DESIGN SYSTEM VARIABLES (PREMIUM DARK & LIGHT STYLING SPEC)
+           ========================================================================== */
+        :root {
+            /* Fonts Stack */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-display: 'Outfit', sans-serif;
+
+            /* Sizing & Grid Parameters */
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 68px;
+            --header-height: 64px;
+            --drawer-width: 440px;
+
+            /* Theme Accent Tokens */
+            --accent-color: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --accent-glow: rgba(59, 130, 246, 0.15);
+
+            /* Resource Category Custom Colors */
+            --color-snippet: #3b82f6;
+            --color-prompt: #8b5cf6;
+            --color-command: #f97316;
+            --color-note: #fde047;
+            --color-file: #9ca3af;
+            --color-image: #ec4899;
+            --color-link: #10b981;
+
+            /* Motion Curve (Cubic Bezier Tuning) */
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+            /* Shadows & Blur Filters */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
+            --glass-blur: blur(12px);
+
+            /* Dark Mode Color Palette (Default) */
+            --bg-main: #090b0e;
+            --bg-sidebar: #101317;
+            --bg-card: #15191f;
+            --bg-card-hover: #1e242d;
+            --bg-overlay: rgba(9, 11, 14, 0.75);
+            --border-color: #1e242e;
+            --border-hover: #2d3646;
+
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --text-accent: #3b82f6;
+        }
+
+        /* Light Mode Canvas Overrides */
+        body.light-theme {
+            --bg-main: #f9fafb;
+            --bg-sidebar: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f3f4f6;
+            --bg-overlay: rgba(249, 250, 251, 0.8);
+            --border-color: #e5e7eb;
+            --border-hover: #d1d5db;
+
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
+            --text-accent: #2563eb;
+
+            --accent-color: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.08);
+
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+        }
+
+        /* ==========================================================================
+           2. BASE DOCUMENT RESET & BODY SCROLLBARS
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            transition: background-color var(--transition-normal), color var(--transition-normal);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-hover);
+        }
+
+        /* Typography Tags */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        button {
+            font-family: var(--font-sans);
+            cursor: pointer;
+            background: none;
+            border: none;
+            outline: none;
+            color: inherit;
+            transition: color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        input {
+            font-family: var(--font-sans);
+            background: none;
+            border: none;
+            outline: none;
+            color: inherit;
+        }
+
+        /* ==========================================================================
+           3. APP WRAPPER LAYOUT & COMPONENT MODULES
+           ========================================================================== */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ==========================================================================
+           SIDEBAR COMPONENT
+           ========================================================================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100%;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: width var(--transition-normal), transform var(--transition-normal);
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar-header {
+            height: var(--header-height);
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 16px;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 18px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            white-space: nowrap;
+            opacity: 1;
+            transition: opacity var(--transition-normal);
+        }
+
+        .sidebar.collapsed .logo-text {
+            opacity: 0;
+            width: 0;
+            pointer-events: none;
+        }
+
+        .collapse-btn {
+            color: var(--text-muted);
+            padding: 6px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .collapse-btn:hover {
+            color: var(--text-primary);
+            background-color: var(--border-color);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .nav-section {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-section-title {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            padding: 0 8px 8px 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: opacity var(--transition-normal);
+        }
+
+        .sidebar.collapsed .nav-section-title {
+            opacity: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color var(--transition-fast), background-color var(--transition-fast);
+            position: relative;
+            user-select: none;
+        }
+
+        .nav-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .nav-item-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform var(--transition-fast);
+        }
+
+        .nav-item-name {
+            transition: opacity var(--transition-normal);
+        }
+
+        .sidebar.collapsed .nav-item-name,
+        .sidebar.collapsed .nav-item-badge {
+            opacity: 0;
+            width: 0;
+            pointer-events: none;
+            display: none;
+        }
+
+        .nav-item-badge {
+            font-size: 10px;
+            background-color: var(--border-color);
+            color: var(--text-muted);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-card);
+        }
+
+        .nav-item:hover .nav-item-icon {
+            transform: scale(1.08);
+        }
+
+        .nav-item.active {
+            color: var(--text-primary);
+            background-color: var(--border-color);
+            font-weight: 600;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            bottom: 6px;
+            width: 3px;
+            border-radius: 0 4px 4px 0;
+            background: var(--accent-gradient);
+        }
+
+        /* Upgrade pro promo block */
+        .sidebar-footer {
+            padding: 12px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .pro-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+            transition: opacity var(--transition-normal), max-height var(--transition-normal), padding var(--transition-normal);
+        }
+
+        .sidebar.collapsed .pro-card {
+            opacity: 0;
+            max-height: 0;
+            padding: 0;
+            margin: 0;
+            border: none;
+            pointer-events: none;
+        }
+
+        .pro-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pro-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .pro-btn {
+            background: var(--accent-gradient);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2);
+        }
+
+        .pro-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Profile details component */
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+        }
+
+        .profile-section:hover {
+            background-color: var(--border-color);
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 12px;
+            border: 2px solid var(--bg-sidebar);
+            box-shadow: 0 0 0 1px var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: opacity var(--transition-normal);
+        }
+
+        .sidebar.collapsed .profile-info {
+            opacity: 0;
+            width: 0;
+            display: none;
+        }
+
+        .profile-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .profile-tier {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--color-prompt);
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        /* ==========================================================================
+           MAIN CONTENT CANVAS
+           ========================================================================== */
+        .main-content {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Header Layout & Actions */
+        .header {
+            height: var(--header-height);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            background-color: rgba(9, 11, 14, 0.3);
+            backdrop-filter: var(--glass-blur);
+            z-index: 90;
+        }
+
+        body.light-theme .header {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            max-width: 520px;
+        }
+
+        .mobile-btn {
+            display: none;
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        /* Search input bar */
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input-field {
+            width: 100%;
+            height: 38px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0 40px 0 36px;
+            font-size: 13px;
+            color: var(--text-primary);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .search-input-field:focus {
+            border-color: var(--accent-color);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .search-icon-left {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            display: flex;
+        }
+
+        .keyboard-hint {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: var(--text-muted);
+            background-color: var(--border-color);
+            border: 1px solid var(--border-hover);
+            padding: 2px 5px;
+            border-radius: 4px;
+            pointer-events: none;
+            font-family: var(--font-mono);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .header-btn:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-card);
+            border-color: var(--border-hover);
+        }
+
+        .add-item-btn {
+            background: var(--accent-gradient);
+            color: #ffffff;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 0 16px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+        }
+
+        .add-item-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+        }
+
+        /* ==========================================================================
+           SCROLLABLE WORKSPACE
+           ========================================================================== */
+        .dashboard-scrollview {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Collections Header & Grid */
+        .collections-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-link {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .section-link:hover {
+            color: var(--text-accent);
+        }
+
+        .collections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .collection-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .collection-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .collection-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .collection-card.col-blue::after { background-color: var(--color-snippet); }
+        .collection-card.col-purple::after { background-color: var(--color-prompt); }
+        .collection-card.col-orange::after { background-color: var(--color-command); }
+        .collection-card.col-green::after { background-color: var(--color-link); }
+
+        .collection-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+        }
+
+        .collection-fav-icon {
+            color: #eab308;
+            display: flex;
+        }
+
+        .collection-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .collection-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .collection-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Items Section */
+        .items-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .items-filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .view-toggle-wrapper {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            padding: 2px;
+            border-radius: 6px;
+        }
+
+        .view-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .view-btn.active {
+            color: var(--text-primary);
+            background-color: var(--bg-card);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Grid Lists Items */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .item-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            cursor: pointer;
+            transition: border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+            position: relative;
+        }
+
+        .item-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .item-card.selected {
+            border-color: var(--accent-color);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .item-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .item-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        .item-badge-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        .item-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-card-action {
+            color: var(--text-muted);
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .item-card-action:hover {
+            color: #eab308;
+            background-color: var(--border-color);
+        }
+
+        .item-card-action.starred {
+            color: #eab308;
+        }
+
+        .item-card-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Element Previews */
+        .code-preview-box {
+            background-color: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            line-height: 1.5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: pre;
+            color: #60a5fa;
+        }
+
+        .cmd-preview-box {
+            background-color: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cmd-preview-prompt {
+            color: var(--color-command);
+            font-weight: 600;
+        }
+
+        .link-preview-box {
+            background-color: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--color-link);
+            text-decoration: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .item-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .item-tags-list {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .item-tag {
+            font-size: 10px;
+            background-color: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .item-date {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* ==========================================================================
+           DETAIL SLIDING DRAWER CONTAINER
+           ========================================================================== */
+        .drawer-backdrop {
+            position: absolute;
+            inset: 0;
+            background-color: var(--bg-overlay);
+            backdrop-filter: var(--glass-blur);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-normal);
+            z-index: 150;
+        }
+
+        .drawer-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .drawer {
+            position: absolute;
+            top: 0;
+            right: -100%;
+            bottom: 0;
+            width: var(--drawer-width);
+            background-color: var(--bg-sidebar);
+            border-left: 1px solid var(--border-color);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            transition: right var(--transition-slow);
+            z-index: 160;
+        }
+
+        .drawer.open {
+            right: 0;
+        }
+
+        .drawer-header {
+            height: var(--header-height);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .drawer-actions-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .drawer-action-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .drawer-action-btn:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-card);
+        }
+
+        .drawer-close-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .drawer-close-btn:hover {
+            color: var(--text-primary);
+            background-color: var(--border-color);
+        }
+
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .drawer-meta-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .meta-row {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .meta-label {
+            width: 100px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .meta-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .drawer-code-block {
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Gemini AI copilot visual panel */
+        .ai-console {
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-main);
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ai-console-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--color-prompt);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .ai-console-stream {
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        /* ==========================================================================
+           RESPONSIVE VIEWPORT BREAKPOINTS
+           ========================================================================== */
+        @media (max-width: 992px) {
+            --drawer-width: 380px;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-btn {
+                display: flex;
+            }
+
+            .sidebar {
+                position: absolute;
+                left: -100%;
+                top: 0;
+                bottom: 0;
+                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.25);
+                transition: left var(--transition-normal);
+            }
+
+            .sidebar.open-mobile {
+                left: 0;
+            }
+
+            .sidebar.collapsed {
+                width: var(--sidebar-width);
+            }
+
+            .sidebar.collapsed .logo-text {
+                opacity: 1;
+                width: auto;
+            }
+
+            .sidebar.collapsed .profile-info,
+            .sidebar.collapsed .nav-item-name,
+            .sidebar.collapsed .nav-item-badge {
+                display: flex;
+                opacity: 1;
+                width: auto;
+            }
+
+            .sidebar.collapsed .pro-card {
+                display: flex;
+                max-height: 200px;
+                opacity: 1;
+                padding: 12px;
+            }
+
+            .collapse-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MAIN APP CONTAINER -->
+    <div class="app-container" id="appContainer">
+        
+        <!-- 1. LEFT SIDEBAR COMPONENT -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-icon">D</div>
+                    <span class="logo-text">DevStash</span>
+                </div>
+                <button class="collapse-btn" id="sidebarToggle" title="Collapse Sidebar (Ctrl+B)">
+                    <i data-lucide="chevrons-left" style="width: 16px; height: 16px;"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <!-- Directory Navigation Section -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Directory</div>
+                    <div class="nav-item active">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon"><i data-lucide="layout-dashboard"></i></span>
+                            <span class="nav-item-name">All Resources</span>
+                        </div>
+                        <span class="nav-item-badge">8</span>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon" style="color: #eab308;"><i data-lucide="star"></i></span>
+                            <span class="nav-item-name">Favorites</span>
+                        </div>
+                        <span class="nav-item-badge">4</span>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon" style="color: var(--color-snippet);"><i data-lucide="pin"></i></span>
+                            <span class="nav-item-name">Pinned</span>
+                        </div>
+                        <span class="nav-item-badge">2</span>
+                    </div>
+                </div>
+
+                <!-- Content Type Filters -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Resource Types</div>
+                    <div class="nav-item">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon" style="color: var(--color-snippet);"><i data-lucide="code"></i></span>
+                            <span class="nav-item-name">Snippets</span>
+                        </div>
+                        <span class="nav-item-badge">2</span>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon" style="color: var(--color-prompt);"><i data-lucide="sparkles"></i></span>
+                            <span class="nav-item-name">Prompts</span>
+                        </div>
+                        <span class="nav-item-badge">2</span>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon" style="color: var(--color-command);"><i data-lucide="terminal"></i></span>
+                            <span class="nav-item-name">Commands</span>
+                        </div>
+                        <span class="nav-item-badge">2</span>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon" style="color: var(--color-link);"><i data-lucide="link"></i></span>
+                            <span class="nav-item-name">Links</span>
+                        </div>
+                        <span class="nav-item-badge">1</span>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon" style="color: var(--color-image);"><i data-lucide="image"></i></span>
+                            <span class="nav-item-name">Images</span>
+                        </div>
+                        <span class="nav-item-badge">1</span>
+                    </div>
+                </div>
+
+                <!-- Custom Collections Section -->
+                <div class="nav-section">
+                    <div class="nav-section-title">Collections</div>
+                    <div class="nav-item">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon" style="color: var(--text-muted);"><i data-lucide="folder-heart"></i></span>
+                            <span class="nav-item-name">React Patterns</span>
+                        </div>
+                        <span class="nav-item-badge">3</span>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon" style="color: var(--text-muted);"><i data-lucide="folder"></i></span>
+                            <span class="nav-item-name">Docker & DevOps</span>
+                        </div>
+                        <span class="nav-item-badge">2</span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Sidebar Pro Banner & Profile -->
+            <div class="sidebar-footer">
+                <div class="pro-card">
+                    <div class="pro-title">
+                        <i data-lucide="sparkles" style="width: 14px; height: 14px; color: var(--color-prompt);"></i>
+                        Upgrade to Pro
+                    </div>
+                    <div class="pro-desc">Unlock unlimited folders, image uploads, and full AI copilot models.</div>
+                    <button class="pro-btn">Get DevStash Pro</button>
+                </div>
+                
+                <div class="profile-section">
+                    <div class="avatar">R</div>
+                    <div class="profile-info">
+                        <span class="profile-name">Reza</span>
+                        <span class="profile-tier">
+                            <i data-lucide="shield-check" style="width:10px;height:10px;"></i>
+                            Free Tier
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 2. MAIN APP CONTENT CANVAS -->
+        <main class="main-content">
+            
+            <!-- Global Top Bar Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="mobile-btn" id="mobileToggle" title="Open Menu">
+                        <i data-lucide="menu" style="width: 16px; height: 16px;"></i>
+                    </button>
+                    
+                    <div class="search-wrapper">
+                        <span class="search-icon-left"><i data-lucide="search" style="width: 16px; height: 16px;"></i></span>
+                        <input type="text" class="search-input-field" placeholder="Instant retrieval across snippets, tags, collections..." readonly>
+                        <span class="keyboard-hint">/</span>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <button class="header-btn" title="Command Palette (Ctrl+K)">
+                        <i data-lucide="terminal" style="width: 16px; height: 16px;"></i>
+                    </button>
+                    <button class="header-btn" id="themeToggle" title="Toggle Theme (T)">
+                        <i data-lucide="sun" style="width: 16px; height: 16px;"></i>
+                    </button>
+                    <button class="add-item-btn">
+                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                        <span>New Item</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Scrollable Workspace Dashboard Layout -->
+            <div class="dashboard-scrollview">
+                
+                <!-- Section A: Recent Collections Folders -->
+                <section class="collections-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i data-lucide="folders" style="width: 18px; height: 18px; color: var(--color-snippet);"></i>
+                            Recent Collections
+                        </h2>
+                        <a href="#" class="section-link">View all folders</a>
+                    </div>
+                    
+                    <div class="collections-grid">
+                        <!-- Card 1 -->
+                        <div class="collection-card col-blue">
+                            <div class="collection-card-header">
+                                <i data-lucide="folder-heart"></i>
+                                <span class="collection-fav-icon"><i data-lucide="star" style="width: 12px; height: 12px; fill: #eab308;"></i></span>
+                            </div>
+                            <h3 class="collection-name">React Patterns</h3>
+                            <p class="collection-desc">Custom hooks, state helpers, and layout utilities.</p>
+                            <div class="collection-footer">
+                                <span>3 assets</span>
+                                <span>Modified 2d ago</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="collection-card col-purple">
+                            <div class="collection-card-header">
+                                <i data-lucide="folder-heart"></i>
+                                <span class="collection-fav-icon"><i data-lucide="star" style="width: 12px; height: 12px; fill: #eab308;"></i></span>
+                            </div>
+                            <h3 class="collection-name">AI Prompt Engineering</h3>
+                            <p class="collection-desc">System templates, roleplays, and contextual builders.</p>
+                            <div class="collection-footer">
+                                <span>2 assets</span>
+                                <span>Modified 1d ago</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="collection-card col-orange">
+                            <div class="collection-card-header">
+                                <i data-lucide="folder"></i>
+                            </div>
+                            <h3 class="collection-name">Docker & DevOps</h3>
+                            <p class="collection-desc">Scripts, configurations, and compose boilerplates.</p>
+                            <div class="collection-footer">
+                                <span>2 assets</span>
+                                <span>Modified 3d ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section B: Resources Grid/List Workspace -->
+                <section class="items-section">
+                    <div class="items-filter-bar">
+                        <h2 class="section-title">
+                            All Resources
+                            <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">(8 items found)</span>
+                        </h2>
+                        
+                        <div class="view-toggle-wrapper">
+                            <button class="view-btn active" title="Grid View">
+                                <i data-lucide="grid" style="width:14px;height:14px;"></i>
+                            </button>
+                            <button class="view-btn" title="List View">
+                                <i data-lucide="list" style="width:14px;height:14px;"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="items-grid">
+                        <!-- Item Card 1: Snippet -->
+                        <div class="item-card" onclick="openDrawer('snippet')">
+                            <div class="item-card-header">
+                                <div class="item-title-wrapper">
+                                    <span class="item-badge-icon" style="background-color: rgba(59, 130, 246, 0.15); color: var(--color-snippet);">
+                                        <i data-lucide="code"></i>
+                                    </span>
+                                    <h4 class="item-card-title">useLocalStorage Custom Hook</h4>
+                                    <span style="color: #3b82f6; display: inline-flex;"><i data-lucide="pin" style="width: 12px; height: 12px;"></i></span>
+                                </div>
+                                <button class="item-card-action starred"><i data-lucide="star" style="width:14px;height:14px;fill:#eab308;"></i></button>
+                            </div>
+                            
+                            <p class="item-card-desc">A fully typed React hook to sync state with localStorage, including JSON parsing safeguards.</p>
+                            
+                            <div class="code-preview-box">
+import { useState, useEffect } from 'react';
+export function useLocalStorage<T>(key: string) { ... }
+                            </div>
+
+                            <div class="item-card-footer">
+                                <div class="item-tags-list">
+                                    <span class="item-tag">#React</span>
+                                    <span class="item-tag">#TypeScript</span>
+                                </div>
+                                <span class="item-date">May 24</span>
+                            </div>
+                        </div>
+
+                        <!-- Item Card 2: Command -->
+                        <div class="item-card" onclick="openDrawer('command')">
+                            <div class="item-card-header">
+                                <div class="item-title-wrapper">
+                                    <span class="item-badge-icon" style="background-color: rgba(249, 115, 22, 0.15); color: var(--color-command);">
+                                        <i data-lucide="terminal"></i>
+                                    </span>
+                                    <h4 class="item-card-title">Supabase & Prisma Docker Stack</h4>
+                                </div>
+                                <button class="item-card-action"><i data-lucide="star" style="width:14px;height:14px;"></i></button>
+                            </div>
+                            
+                            <p class="item-card-desc">Docker Compose configuration setting up PostgreSQL, Supabase Studio, and direct connection ports.</p>
+                            
+                            <div class="cmd-preview-box">
+                                <span class="cmd-preview-prompt">$</span>
+                                <span>docker-compose up -d --build</span>
+                            </div>
+
+                            <div class="item-card-footer">
+                                <div class="item-tags-list">
+                                    <span class="item-tag">#Docker</span>
+                                    <span class="item-tag">#Database</span>
+                                </div>
+                                <span class="item-date">May 26</span>
+                            </div>
+                        </div>
+
+                        <!-- Item Card 3: Prompt -->
+                        <div class="item-card" onclick="openDrawer('prompt')">
+                            <div class="item-card-header">
+                                <div class="item-title-wrapper">
+                                    <span class="item-badge-icon" style="background-color: rgba(139, 92, 246, 0.15); color: var(--color-prompt);">
+                                        <i data-lucide="sparkles"></i>
+                                    </span>
+                                    <h4 class="item-card-title">Gemini Context Engineering Prompt</h4>
+                                    <span style="color: #3b82f6; display: inline-flex;"><i data-lucide="pin" style="width: 12px; height: 12px;"></i></span>
+                                </div>
+                                <button class="item-card-action starred"><i data-lucide="star" style="width:14px;height:14px;fill:#eab308;"></i></button>
+                            </div>
+                            
+                            <p class="item-card-desc">Highly detailed system instructions directing models on structuring React contexts with defensive patterns.</p>
+                            
+                            <div class="code-preview-box" style="color: #c084fc;">
+You are an expert software architect specializing in state engineering.
+Write pristine React context modules using TypeScript...
+                            </div>
+
+                            <div class="item-card-footer">
+                                <div class="item-tags-list">
+                                    <span class="item-tag">#AI</span>
+                                    <span class="item-tag">#Context</span>
+                                </div>
+                                <span class="item-date">May 27</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Drawer Backdrop Overlay -->
+            <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+
+            <!-- 3. SLIDING DETAIL DRAWER COMPONENT -->
+            <div class="drawer" id="drawer">
+                <div class="drawer-header">
+                    <div class="drawer-actions-left">
+                        <button class="drawer-action-btn" title="Add to Favorites">
+                            <i data-lucide="star" style="width: 16px; height: 16px; fill: #eab308; color: #eab308;"></i>
+                        </button>
+                        <button class="drawer-action-btn" title="Pin Item">
+                            <i data-lucide="pin" style="width: 16px; height: 16px; color: var(--accent-color);"></i>
+                        </button>
+                    </div>
+                    <button class="drawer-close-btn" onclick="closeDrawer()" title="Close Details (Esc)">
+                        <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+                    </button>
+                </div>
+                
+                <!-- Dynamic Detail Details -->
+                <div class="drawer-body">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <h3 id="drawerTitle" style="font-family: var(--font-display); font-size: 18px; font-weight: 700;">useLocalStorage Custom Hook</h3>
+                        <p id="drawerDesc" style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">A fully typed React hook to sync state with localStorage, including JSON parsing safeguards.</p>
+                    </div>
+
+                    <div class="drawer-meta-section">
+                        <div class="meta-row">
+                            <span class="meta-label">Type</span>
+                            <span class="meta-value" id="drawerType" style="color: var(--color-snippet);">Snippet</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">Language</span>
+                            <span class="meta-value">TypeScript</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">Modified</span>
+                            <span class="meta-value">2 days ago</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Source Code Content</span>
+                        <pre class="drawer-code-block" id="drawerCode">import { useState } from 'react';
+
+export function useLocalStorage<T>(key: string, initialValue: T) {
+  const [storedValue, setStoredValue] = useState(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      return initialValue;
+    }
+  });
+  return [storedValue, setStoredValue];
+}</pre>
+                    </div>
+                </div>
+
+                <!-- Interactive Mock Copilot Console -->
+                <div class="ai-console">
+                    <div class="ai-console-header">
+                        <span>Gemini 3.5 Flash — Explainer Copilot</span>
+                        <span style="opacity: 0.6; font-size: 9px;">Powered by Google</span>
+                    </div>
+                    <div class="ai-console-stream" id="aiStream">
+                        This hook safely persists your reactive state inside the client browser. It lazy-loads connections on startup to prevent slow hydration lags.
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- 4. LIGHTWEIGHT INTERACTIVITY SCRIPTS -->
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // 1. Sidebar Toggles (Collapsed vs Normal)
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            
+            // Swap Collapse Icon Direction
+            const icon = sidebarToggle.querySelector('i');
+            if (sidebar.classList.contains('collapsed')) {
+                icon.setAttribute('data-lucide', 'chevrons-right');
+            } else {
+                icon.setAttribute('data-lucide', 'chevrons-left');
+            }
+            lucide.createIcons();
+        });
+
+        // 2. Light / Dark Theme Toggles
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('light-theme')) {
+                icon.setAttribute('data-lucide', 'moon');
+            } else {
+                icon.setAttribute('data-lucide', 'sun');
+            }
+            lucide.createIcons();
+        });
+
+        // 3. Mobile Hamburger toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open-mobile');
+        });
+
+        // 4. Detail Drawer Controllers
+        const drawer = document.getElementById('drawer');
+        const drawerBackdrop = document.getElementById('drawerBackdrop');
+        const drawerTitle = document.getElementById('drawerTitle');
+        const drawerDesc = document.getElementById('drawerDesc');
+        const drawerType = document.getElementById('drawerType');
+        const drawerCode = document.getElementById('drawerCode');
+        const aiStream = document.getElementById('aiStream');
+
+        const mockDrawerData = {
+            snippet: {
+                title: "useLocalStorage Custom Hook",
+                desc: "A fully typed React hook to sync state with localStorage, including JSON parsing safeguards.",
+                type: "Snippet",
+                typeColor: "var(--color-snippet)",
+                code: `import { useState } from 'react';\n\nexport function useLocalStorage<T>(key: string, initialValue: T) {\n  const [storedValue, setStoredValue] = useState(() => {\n    try {\n      const item = window.localStorage.getItem(key);\n      return item ? JSON.parse(item) : initialValue;\n    } catch (error) {\n      return initialValue;\n    }\n  });\n  return [storedValue, setStoredValue];\n}`,
+                ai: "This hook safely persists your reactive state inside the client browser. It lazy-loads connections on startup to prevent slow hydration lags."
+            },
+            command: {
+                title: "Supabase & Prisma Docker Stack",
+                desc: "Docker Compose configuration setting up PostgreSQL, Supabase Studio, and direct connection ports.",
+                type: "Command",
+                typeColor: "var(--color-command)",
+                code: `version: '3.8'\nservices:\n  postgres:\n    image: postgres:15-alpine\n    ports:\n      - "54322:5432"\n    environment:\n      POSTGRES_PASSWORD: db-password-99`,
+                ai: "Spins up PostgreSQL in a virtualized container, decoupling connection lines from standard port 5432. Named volumes protect indices between reboots."
+            },
+            prompt: {
+                title: "Gemini Context Engineering Prompt",
+                desc: "Highly detailed system instructions directing models on structuring React contexts with defensive patterns.",
+                type: "Prompt",
+                typeColor: "var(--color-prompt)",
+                code: `You are an expert software architect specializing in state engineering.\nWrite pristine React context modules using TypeScript.\nNever export raw context components; wrap inside custom hooks...`,
+                ai: "Persona constraints drive LLMs to produce secure contexts by raising errors early when loading outside respective providers."
+            }
+        };
+
+        function openDrawer(type) {
+            const data = mockDrawerData[type];
+            if (!data) return;
+
+            drawerTitle.textContent = data.title;
+            drawerDesc.textContent = data.desc;
+            drawerType.textContent = data.type;
+            drawerType.style.color = data.typeColor;
+            drawerCode.textContent = data.code;
+            aiStream.textContent = data.ai;
+
+            drawer.classList.add('open');
+            drawerBackdrop.classList.add('open');
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove('open');
+            drawerBackdrop.classList.remove('open');
+        }
+
+        // Close details on escape keypress
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeDrawer();
+            }
+        });
+    </script>
+</body>
+</html>
