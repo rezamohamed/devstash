@@ -4,15 +4,23 @@
 
 <!-- Not Started|In Progress|Completed -->
 
-Not Started
+In Progress
 
 ## Feature
 
 <!-- What are we building? -->
 
+Code Quality Quick Wins — Fix minor issues identified in codebase review:
+- Replace magic number `86400000` with named `MS_PER_DAY` constant in `collections.ts`
+- Add defensive handling to `getInitials()` for empty/whitespace names in `sidebar.tsx`
+- Remove unused `viewMode` prop from `ItemCard.tsx`
+
 ## Goals
 
-<!-- What does success look like? -->
+- [x] Replace magic number `86400000` with `MS_PER_DAY` constant in `collections.ts`
+- [x] Add defensive handling to `getInitials()` for empty/whitespace names in `sidebar.tsx`
+- [x] Remove unused `viewMode` prop from `ItemCard.tsx`
+- [x] Run `bun run build` and verify no errors
 
 ## Notes
 
