@@ -47,12 +47,14 @@ function SidebarContent({
 }: SidebarContentProps) {
   const pathname = usePathname();
 
-  const getInitials = (name: string) =>
-    name
+  const getInitials = (name: string) => {
+    if (!name?.trim()) return "?";
+    return name
       .split(" ")
       .map((n) => n[0])
       .join("")
-      .toUpperCase();
+      .toUpperCase() || "?";
+  };
 
   return (
     <div className="flex h-full flex-col" style={{ backgroundColor: 'var(--bg-sidebar)' }}>

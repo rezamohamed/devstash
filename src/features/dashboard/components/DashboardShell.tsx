@@ -250,7 +250,6 @@ export function DashboardShell({
                     tags={tags}
                     iconComponent={getItemTypeIcon(item.itemTypeId)}
                     iconColor={getItemTypeColor(item.itemTypeId)}
-                    viewMode={viewMode}
                   />
                 ))}
               </div>

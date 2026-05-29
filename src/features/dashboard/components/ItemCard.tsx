@@ -20,7 +20,6 @@ interface ItemCardProps {
   tags: Tag[];
   iconComponent: React.ElementType;
   iconColor: string;
-  viewMode?: "grid" | "list";
   onToggleFavorite?: (id: string) => void;
   onTogglePin?: (id: string) => void;
 }
@@ -30,7 +29,6 @@ export function ItemCard({
   tags,
   iconComponent: Icon,
   iconColor: color,
-  viewMode: _viewMode,
   onToggleFavorite,
   onTogglePin,
 }: ItemCardProps) {

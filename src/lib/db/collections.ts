@@ -78,8 +78,9 @@ export async function getRecentCollections(limit = 6): Promise<CollectionWithDet
       }
     }
 
+    const MS_PER_DAY = 24 * 60 * 60 * 1000;
     const diffMs = now.getTime() - toDate(collection.updatedAt).getTime();
-    const modifiedDaysAgo = Math.floor(diffMs / 86400000);
+    const modifiedDaysAgo = Math.floor(diffMs / MS_PER_DAY);
 
     return {
       id: collection.id,
