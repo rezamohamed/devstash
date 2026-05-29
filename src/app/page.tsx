@@ -3,6 +3,8 @@ import { getRecentCollections } from "@/lib/db/collections";
 import { getRecentItems, getAllTags, getItemTypes } from "@/lib/db/items";
 import { getFirstUser } from "@/lib/db/users";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const [recentCollections, items, tags, itemTypes, currentUser] = await Promise.all([
     getRecentCollections(6),
