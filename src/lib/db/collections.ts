@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { getSql, toDate } from "@/lib/db/sql";
 
 export type CollectionWithDetails = {
   id: string;
@@ -11,43 +11,64 @@ export type CollectionWithDetails = {
   modifiedDaysAgo: number;
 };
 
+type CollectionRow = {
+  id: string;
+  name: string;
+  description: string | null;
+  isFavorite: boolean;
+  updatedAt: Date | string;
+  itemId: string | null;
+  itemTypeName: string | null;
+  itemTypeColor: string | null;
+};
+
 export async function getRecentCollections(limit = 6): Promise<CollectionWithDetails[]> {
-  const collections = await prisma.collection.findMany({
-    include: {
-      items: {
-        include: {
-          item: {
-            include: {
-              itemType: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-    take: limit,
-  });
-
+  const sql = getSql();
+  const rows = await sql`
+    WITH recent_collections AS (
+      SELECT *
+      FROM "Collection"
+      ORDER BY "updatedAt" DESC
+      LIMIT ${limit}
+    )
+    SELECT
+      collection."id",
+      collection."name",
+      collection."description",
+      collection."isFavorite",
+      collection."updatedAt",
+      item."id" AS "itemId",
+      item_type."name" AS "itemTypeName",
+      item_type."color" AS "itemTypeColor"
+    FROM recent_collections collection
+    LEFT JOIN "ItemCollection" item_collection ON item_collection."collectionId" = collection."id"
+    LEFT JOIN "Item" item ON item."id" = item_collection."itemId"
+    LEFT JOIN "ItemType" item_type ON item_type."id" = item."itemTypeId"
+    ORDER BY collection."updatedAt" DESC
+  `;
   const now = new Date();
+  const collections = new Map<string, CollectionRow[]>();
 
-  return collections.map((collection) => {
-    const items = collection.items.map((ic) => ic.item);
+  for (const row of rows as CollectionRow[]) {
+    collections.set(row.id, [...(collections.get(row.id) ?? []), row]);
+  }
 
-    // Count content types
+  return Array.from(collections.values()).map((collectionRows) => {
+    const collection = collectionRows[0];
     const contentTypeCount: Record<string, number> = {};
     const typeColors: string[] = [];
+    const itemIds = new Set<string>();
 
-    for (const item of items) {
-      const typeName = item.itemType.name;
-      contentTypeCount[typeName] = (contentTypeCount[typeName] || 0) + 1;
-      if (!typeColors.includes(item.itemType.color)) {
-        typeColors.push(item.itemType.color);
+    for (const row of collectionRows) {
+      if (!row.itemId || !row.itemTypeName || !row.itemTypeColor) continue;
+
+      itemIds.add(row.itemId);
+      contentTypeCount[row.itemTypeName] = (contentTypeCount[row.itemTypeName] || 0) + 1;
+      if (!typeColors.includes(row.itemTypeColor)) {
+        typeColors.push(row.itemTypeColor);
       }
     }
 
-    // Find most used content type
     let mostUsedContentType = "snippet";
     let maxCount = 0;
     for (const [type, count] of Object.entries(contentTypeCount)) {
@@ -57,8 +78,7 @@ export async function getRecentCollections(limit = 6): Promise<CollectionWithDet
       }
     }
 
-    // Calculate days since last update
-    const diffMs = now.getTime() - collection.updatedAt.getTime();
+    const diffMs = now.getTime() - toDate(collection.updatedAt).getTime();
     const modifiedDaysAgo = Math.floor(diffMs / 86400000);
 
     return {
@@ -66,7 +86,7 @@ export async function getRecentCollections(limit = 6): Promise<CollectionWithDet
       name: collection.name,
       description: collection.description,
       isFavorite: collection.isFavorite,
-      itemCount: items.length,
+      itemCount: itemIds.size,
       mostUsedContentType,
       typeColors,
       modifiedDaysAgo,

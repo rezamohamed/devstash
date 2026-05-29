@@ -1,10 +1,15 @@
-import { prisma } from "@/lib/prisma";
 import type { User } from "@/features/users/types/user";
+import { getSql } from "@/lib/db/sql";
 
 export async function getUser(userId: string): Promise<User | null> {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
+  const sql = getSql();
+  const users = await sql`
+    SELECT "id", "email", "name", "image", "isPro"
+    FROM "User"
+    WHERE "id" = ${userId}
+    LIMIT 1
+  `;
+  const user = (users as User[])[0];
 
   if (!user) return null;
 
@@ -18,11 +23,14 @@ export async function getUser(userId: string): Promise<User | null> {
 }
 
 export async function getFirstUser(): Promise<User | null> {
-  const user = await prisma.user.findFirst({
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
+  const sql = getSql();
+  const users = await sql`
+    SELECT "id", "email", "name", "image", "isPro"
+    FROM "User"
+    ORDER BY "createdAt" ASC
+    LIMIT 1
+  `;
+  const user = (users as User[])[0];
 
   if (!user) return null;
 
