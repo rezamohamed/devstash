@@ -20,7 +20,7 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: "DevStash",
-  description: "Developer knowledge hub for snippets, prompts, commands, and more",
+  description: "Developer knowledge hub for snippets, prompts, skills, and more",
 };
 
 export default function RootLayout({

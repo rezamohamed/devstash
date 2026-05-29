@@ -51,7 +51,7 @@ export const items: Item[] = [
   {
     id: "item_3",
     title: "Database Migration Commands",
-    description: "Essential Prisma migration commands for production deployments",
+    description: "Essential Prisma migration skills for production deployments",
     contentType: "TEXT",
     content: "# Always use migrate dev for development\nnpx prisma migrate dev\n\n# Use migrate deploy for production\nnpx prisma migrate deploy\n\n# Never use db push in production",
     fileUrl: null,

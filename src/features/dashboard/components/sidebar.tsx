@@ -15,6 +15,7 @@ import {
   FolderOpen,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
@@ -303,6 +304,9 @@ function SidebarContent({
                     <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <Icon style={{ width: '16px', height: '16px', color: type.color }} />
                       <span>{type.name.charAt(0).toUpperCase() + type.name.slice(1)}s</span>
+                      {(type.name === 'file' || type.name === 'image') && (
+                        <Badge variant="pro" className="text-[9px] px-1 py-0 h-4">Pro</Badge>
+                      )}
                     </span>
                     <span
                       className="nav-item-badge"

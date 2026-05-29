@@ -298,7 +298,7 @@ echo "Deployment successful!"`,
   },
   {
     name: "Terminal Commands",
-    description: "Useful shell commands for everyday development",
+    description: "Useful shell skills for everyday development",
     items: [
       {
         title: "Git Undo Last Commit",
