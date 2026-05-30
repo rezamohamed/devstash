@@ -1,5 +1,5 @@
 import type { Item, Tag, ItemType } from "@/features/items/types/item";
-import { getSql, toDate, toStringArray } from "@/lib/db/sql";
+import { getSql, toDate, toStringArray } from "@/lib/sql";
 
 export type ItemWithDetails = Item;
 

@@ -1,4 +1,4 @@
-import { getSql, toDate } from "@/lib/db/sql";
+import { getSql, toDate } from "@/lib/sql";
 
 export type CollectionWithDetails = {
   id: string;

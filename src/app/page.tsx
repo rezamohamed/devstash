@@ -1,17 +1,21 @@
 import { DashboardShell } from "@/features/dashboard/components/DashboardShell";
-import { getRecentCollections } from "@/lib/db/collections";
-import { getRecentItems, getAllTags, getItemTypes } from "@/lib/db/items";
-import { getFirstUser } from "@/lib/db/users";
+import { getRecentCollections } from "@/features/collections/data/collections";
+import { getRecentItems, getAllTags, getItemTypes } from "@/features/items/data/items";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [recentCollections, items, tags, itemTypes, currentUser] = await Promise.all([
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const [recentCollections, items, tags, itemTypes] = await Promise.all([
     getRecentCollections(6),
     getRecentItems(50),
     getAllTags(),
     getItemTypes(),
-    getFirstUser(),
   ]);
 
   return (
@@ -20,7 +24,16 @@ export default async function DashboardPage() {
       items={items}
       tags={tags}
       itemTypes={itemTypes}
-      currentUser={currentUser}
+      user={
+        session?.user
+          ? {
+              id: session.user.id,
+              name: session.user.name ?? null,
+              email: session.user.email,
+              image: session.user.image ?? null,
+            }
+          : null
+      }
     />
   );
 }

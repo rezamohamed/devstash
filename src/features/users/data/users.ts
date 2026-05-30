@@ -1,5 +1,5 @@
 import type { User } from "@/features/users/types/user";
-import { getSql } from "@/lib/db/sql";
+import { getSql } from "@/lib/sql";
 
 export async function getUser(userId: string): Promise<User | null> {
   const sql = getSql();

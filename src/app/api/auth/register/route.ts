@@ -1,5 +1,4 @@
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -13,19 +12,17 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Check if user already exists
-  const existingUser = await prisma.user.findUnique({ where: { email } });
-  if (existingUser) {
-    return NextResponse.json(
-      { error: "User already exists" },
-      { status: 409 }
-    );
+  // signUp.email() handles duplicate detection and triggers
+  // sendOnSignUp + sendVerificationEmail automatically
+  try {
+    const user = await auth.api.signUpEmail({
+      body: { email, password, name },
+    });
+
+    return NextResponse.json({ success: true, user }, { status: 201 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Registration failed";
+    const status = message.toLowerCase().includes("already") ? 409 : 400;
+    return NextResponse.json({ error: message }, { status });
   }
-
-  // Create user — password hashing is handled by auth.ts config
-  const user = await auth.api.createUser({
-    body: { name, email, password },
-  });
-
-  return NextResponse.json({ success: true, user }, { status: 201 });
 }

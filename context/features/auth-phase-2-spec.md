@@ -91,7 +91,7 @@ curl -X POST http://localhost:3000/api/auth/register \
 
 2. Go to `/sign-in`
 3. Sign in with email/password
-4. Verify redirect to `/dashboard`
+4. Verify redirect to home page
 5. Verify GitHub OAuth still works
 
 ## References

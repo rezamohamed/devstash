@@ -1,5 +1,5 @@
 import { Folder, Star, Code, Sparkles, Terminal, Link as LinkIcon, File, StickyNote, Image } from "lucide-react";
-import type { CollectionWithDetails } from "@/lib/db/collections";
+import type { CollectionWithDetails } from "@/features/collections/data/collections";
 
 const CONTENT_TYPE_COLORS: Record<string, string> = {
   snippet: "var(--color-snippet)",

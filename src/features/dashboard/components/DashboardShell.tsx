@@ -4,20 +4,23 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Plus, Terminal, Sun, Grid, List } from "lucide-react";
-import { Sidebar, MobileSidebar } from "@/features/dashboard/components/sidebar";
+import { Sidebar, MobileSidebar } from "@/features/dashboard/components/Sidebar";
 import { ItemCard } from "@/features/dashboard/components/ItemCard";
 import { CollectionCard } from "@/features/dashboard/components/CollectionCard";
 import { getItemTypeIcon, getItemTypeColor } from "@/features/items/utils/item-types";
 import type { Item, Tag, ItemType } from "@/features/items/types/item";
-import type { CollectionWithDetails } from "@/lib/db/collections";
-import type { User } from "@/features/users/types/user";
-
+import type { CollectionWithDetails } from "@/features/collections/data/collections";
 interface DashboardShellProps {
   recentCollections: CollectionWithDetails[];
   items: Item[];
   tags: Tag[];
   itemTypes: ItemType[];
-  currentUser: User | null;
+  user: {
+    id: string;
+    name: string | null;
+    email: string;
+    image: string | null;
+  } | null;
 }
 
 export function DashboardShell({
@@ -25,7 +28,7 @@ export function DashboardShell({
   items,
   tags,
   itemTypes,
-  currentUser,
+  user,
 }: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -39,7 +42,7 @@ export function DashboardShell({
         items={items}
         itemTypes={itemTypes}
         collections={recentCollections}
-        currentUser={currentUser}
+        user={user}
       />
 
       {/* Main Content Area */}
@@ -60,7 +63,7 @@ export function DashboardShell({
                 items={items}
                 itemTypes={itemTypes}
                 collections={recentCollections}
-                currentUser={currentUser}
+                user={user}
               />
             </div>
 
