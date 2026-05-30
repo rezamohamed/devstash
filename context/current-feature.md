@@ -10,23 +10,30 @@ In Progress
 
 <!-- What are we building? -->
 
-Code Quality Quick Wins — Fix minor issues identified in codebase review:
-- Replace magic number `86400000` with named `MS_PER_DAY` constant in `collections.ts`
-- Add defensive handling to `getInitials()` for empty/whitespace names in `sidebar.tsx`
-- Remove unused `viewMode` prop from `ItemCard.tsx`
+Auth Phase 1 - BetterAuth Setup
 
 ## Goals
 
-- [x] Replace magic number `86400000` with `MS_PER_DAY` constant in `collections.ts`
-- [x] Add defensive handling to `getInitials()` for empty/whitespace names in `sidebar.tsx`
-- [x] Remove unused `viewMode` prop from `ItemCard.tsx`
-- [x] Run `bun run build` and verify no errors
+<!-- What does success looks like? -->
+
+- [x] Install better-auth and @better-auth/prisma-adapter
+- [x] Create src/lib/auth.ts with BetterAuth config
+- [x] Create auth API route handler at /api/auth/[...betterauth]
+- [x] Create src/middleware.ts for route protection
+- [x] Verify build passes
 
 ## Notes
 
 <!-- Additional context, constraints, or details from spec -->
 
+- kysely@0.28.17 required (0.29.x incompatible with bundled SQLite dialects)
+- bcryptjs used for password hashing (already installed)
+- baseURL warning: set BETTER_AUTH_URL env var for production
+- middleware convention deprecated in Next.js 16+ (use "proxy" in future update)
+
 ## History
+- **2026-05-30** — Auth Phase 1 (BetterAuth Setup) completed — installed better-auth + prisma adapter, created auth.ts, API route, middleware; kysely@0.28.17 required for compatibility
+- **2026-05-29** — Code Quality Quick Wins completed — replaced magic number with MS_PER_DAY constant, added defensive handling to getInitials(), removed unused viewMode prop
 - **2026-05-29** — Add Pro Badge To Sidebar completed — created badge component with pro variant, added to files/images links in sidebar
 - **2026-05-28** — Stats & Sidebar from Database completed — sidebar now fetches item types, collections, current user from DB; item types ordered and capitalized
 - **2026-05-28** — Dashboard Items from Database completed — items and tags now fetched from Neon PostgreSQL via Prisma (src/lib/db/items.ts)
