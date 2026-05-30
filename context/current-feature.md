@@ -4,41 +4,60 @@
 
 <!-- Not Started|In Progress|Complete -->
 
-Complete
+In Progress
 
 ## Feature
 
-<!-- Feature name -->
+Profile Page — user info, stats, change password, delete account
 
 ## Goals
 
-<!-- Goals -->
+- [x] Create `/profile` route with auth protection
+- [x] Display user info: avatar, name, email, member since
+- [x] Show usage stats: total items, total collections, breakdown by type
+- [x] Change password (email/password users only)
+- [x] Delete account with confirmation
 
 ## Technical Approach
 
-<!-- Approach -->
+- Server Component page with auth check via BetterAuth
+- Raw SQL via `getSql()` for user stats queries
+- Client Components for interactive forms/dialogs
+- Direct SQL cascade deletion for account removal
 
-### Required Env Vars
+### Env Vars
 
-<!-- Env vars -->
+<!-- None required -->
 
 ### Implementation Steps
 
-<!-- Steps -->
+- [x] Create `src/features/profile/data/profile.ts` with `getUserStats()` and `hasPasswordAccount()`
+- [x] Create `src/app/profile/page.tsx` Server Component
+- [x] Create `src/features/profile/components/ProfileView.tsx` Client Component
+- [x] Create `src/features/profile/components/ChangePasswordForm.tsx` Client Component
+- [x] Create `src/features/profile/components/DeleteAccountDialog.tsx` Client Component
+- [x] Create `src/app/api/profile/change-password/route.ts` API route
+- [x] Create `src/app/api/profile/delete-account/route.ts` API route
+- [x] Profile link already exists in sidebar dropdown
+- [x] Verify build passes
 
 ### Register Flow
 
-<!-- Flow -->
+<!-- N/A -->
 
 ### Verification Email Page
 
-<!-- Page -->
+<!-- N/A -->
 
 ## Notes
 
-<!-- Notes -->
+- Avatar: Use existing `UserAvatar` component (GitHub or initials)
+- Change password only for email/password users (check `Account` table with `providerId = 'credential'`)
+- Delete account: Direct SQL cascade via user deletion (PostgreSQL FK cascade handles items/collections)
+- Item type breakdown uses existing `ItemType` data
 
 ## History
+
 - **2026-05-30** — Email Verification on Registration completed — switched register route from createUser to signUpEmail so BetterAuth properly triggers sendVerificationEmail via Resend
 - **2026-05-30** — Auth Phase 3 (Auth UI - Sign In, Register & Sign Out) completed
 - **2026-05-30** — Auth Phase 3 (Auth UI - Sign In, Register & Sign Out) started
