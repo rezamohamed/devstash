@@ -1,9 +1,11 @@
 import { prisma } from "../src/lib/prisma";
-import bcrypt from "bcryptjs";
+import { auth } from "../src/lib/auth";
 
 // ============================================
 // Seed Data
 // ============================================
+
+const DEMO_USER_PASSWORD = "password123";
 
 const SYSTEM_ITEM_TYPES = [
   { name: "snippet", icon: "Code", color: "#3b82f6", isSystem: true },
@@ -18,7 +20,6 @@ const SYSTEM_ITEM_TYPES = [
 const DEMO_USER = {
   email: "demo@devstash.io",
   name: "Demo User",
-  password: "12345678",
   isPro: false,
 };
 
@@ -423,21 +424,22 @@ yarn upgrade-interactive --latest`,
 async function main() {
   console.log("🌱 Starting database seed...\n");
 
-  // 1. Create demo user
+  // 1. Create demo user with account (uses BetterAuth's createUser which handles hashing)
   console.log("Creating demo user...");
-  const hashedPassword = await bcrypt.hash(DEMO_USER.password, 12);
-  const user = await prisma.user.upsert({
-    where: { email: DEMO_USER.email },
-    update: {},
-    create: {
-      email: DEMO_USER.email,
-      name: DEMO_USER.name,
-      password: hashedPassword,
-      isPro: DEMO_USER.isPro,
-      emailVerified: new Date(),
-    },
-  });
-  console.log(`   ✓ Created user: ${user.email}\n`);
+  let demoUser = await prisma.user.findUnique({ where: { email: DEMO_USER.email } });
+  if (!demoUser) {
+    await auth.api.createUser({
+      body: {
+        name: DEMO_USER.name,
+        email: DEMO_USER.email,
+        password: DEMO_USER_PASSWORD,
+      },
+    });
+    demoUser = await prisma.user.findUnique({ where: { email: DEMO_USER.email } });
+    console.log(`   ✓ Created user: ${DEMO_USER.email}`);
+  } else {
+    console.log(`   ✓ User already exists: ${DEMO_USER.email}`);
+  }
 
   // 2. Create system item types
   console.log("Creating system item types...");
@@ -464,7 +466,7 @@ async function main() {
         id: collection.name.toLowerCase().replace(/\s+/g, "-"),
         name: collection.name,
         description: collection.description,
-        userId: user.id,
+        userId: demoUser!.id,
       },
     });
 
@@ -481,7 +483,7 @@ async function main() {
           language: (item as { language?: string }).language,
           isFavorite: item.isFavorite,
           isPinned: false,
-          userId: user.id,
+          userId: demoUser!.id,
           itemTypeId,
         },
       });
@@ -499,9 +501,6 @@ async function main() {
   }
 
   console.log("✅ Seed completed successfully!");
-  console.log("\nDemo credentials:");
-  console.log(`   Email: ${DEMO_USER.email}`);
-  console.log(`   Password: ${DEMO_USER.password}`);
 }
 
 main()

@@ -4,19 +4,28 @@
 
 <!-- Not Started|In Progress|Completed -->
 
-Not Started
+In Progress
 
 ## Feature
 
-<!-- What are we building? -->
+Auth Phase 2 — Email/Password Provider
 
 ## Goals
 
-<!-- What does success looks like? -->
+- [x] Enable `emailAndPassword` provider in `auth.ts` with bcrypt hash/verify
+- [x] Create `POST /api/auth/register` route handler
+- [x] Build passes
+- [x] Register a new user via curl
+- [x] Sign in via BetterAuth API endpoint (UI pages not yet created)
+- [ ] Verify GitHub OAuth still works
 
 ## Notes
 
-<!-- Additional context, constraints, or details from spec -->
+- bcryptjs for hashing configured in auth.ts (not in route handler)
+- admin plugin added to auth.ts to enable `auth.api.createUser`
+- Schema fixes: `emailVerified` changed to Boolean, added `role`/`banned`, Account/Session models aligned to BetterAuth schema
+- Sign-in endpoint: `POST /api/auth/sign-in/email`
+- UI pages (`/sign-in`, `/register`) not yet created — only API routes
 
 ## History
 - **2026-05-30** — Auth Phase 1 (BetterAuth Setup) completed — installed better-auth + prisma adapter, created auth.ts, API route, middleware; kysely@0.28.17 required for compatibility
