@@ -4,32 +4,19 @@
 
 <!-- Not Started|In Progress|Completed -->
 
-In Progress
+Not Started
 
 ## Feature
 
 <!-- What are we building? -->
 
-Auth Phase 1 - BetterAuth Setup
-
 ## Goals
 
 <!-- What does success looks like? -->
 
-- [x] Install better-auth and @better-auth/prisma-adapter
-- [x] Create src/lib/auth.ts with BetterAuth config
-- [x] Create auth API route handler at /api/auth/[...betterauth]
-- [x] Create src/middleware.ts for route protection
-- [x] Verify build passes
-
 ## Notes
 
 <!-- Additional context, constraints, or details from spec -->
-
-- kysely@0.28.17 required (0.29.x incompatible with bundled SQLite dialects)
-- bcryptjs used for password hashing (already installed)
-- baseURL warning: set BETTER_AUTH_URL env var for production
-- middleware convention deprecated in Next.js 16+ (use "proxy" in future update)
 
 ## History
 - **2026-05-30** — Auth Phase 1 (BetterAuth Setup) completed — installed better-auth + prisma adapter, created auth.ts, API route, middleware; kysely@0.28.17 required for compatibility
